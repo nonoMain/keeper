@@ -11,24 +11,32 @@ the files that you specify to wherever you specify
 # How to use?
 Examples
 ```sh
-# backup my home directory to backup.zip
-./keeper.sh -b [options] backup.zip $HOME
+# backup starting from my current directory to backup.zip
+./keeper.sh -b [options] -t backup.zip
+# backup starting from a specific directory to backup.zip
+./keeper.sh -b [options] -t backup.zip -f <specific directory>
 
-# restore my backup.zip to some home directory
-./keeper.sh -r [options] backup.zip $HOME
+# restore my backup.zip to home directory
+./keeper.sh -r [options] -f backup.zip
+# restore my backup.zip to specific directory
+./keeper.sh -r [options] -f backup.zip -t <specific directory>
 ```
 
-Script's usage
+Usage
 ```
-Usage: keeper.sh -[brh] [options] <path> [<path>]
--b                  backup option
-Backup option requires <path to the backup (where it will be created)> [<path to start backup from>]
--r                  restore option
-Restore option requires <path to restore from> [<path to restore to>]
+Usage: keeper.sh [options]
+-h, --help           show this help message
+-b, --backup         backup option [requires -t]
+-r, --restore        restore option [requires -f]
+-f, --from <path>    in case of restore, specify the backup file
+                     in case of backup its optional, specify the directory to start from [default=\$PWD]
+-t, --to <path>      in case of backup, specify the name of the backup file
+                     in case of restore its optional, specify the directory to restore to [default=\$PWD]
 Optional:
---preview           preview the archive information, only available for zip and tar.gz
---profile=""        backup profile (what files to backup), default is 'default'
---format=""         backup format, default is 'zip'. other options are 'tar.gz'
+--no-confirm         don't ask for confirmation before executing the backup/restore
+--preview            preview the information about the backup/restore
+--profile <profile>  backup profile (what files to backup), default is 'default'
+--format <format>    backup format, options are 'zip' 'tar.gz'
 ```
 
 # What can be backed up?
@@ -40,6 +48,7 @@ from them how to create your own.
 
 # Features
 - [x] different archive types (.zip, .tar.gz)
+- [x] execute purely from command line arguments
 - [x] test if a certain [external] archive is valid
 - [ ] support other backup profiles
 - [ ] choose a backup profile

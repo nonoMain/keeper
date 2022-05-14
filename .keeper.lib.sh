@@ -5,17 +5,28 @@ help_message ()
 {
 	echo \
 "
-Usage: keeper.sh -[brh] [options] [<path>] <path>
--b					backup option
-Backup option requires <path to the backup (where it will be created)> [<path to start backup from>]
--r					restore option
-Restore option requires [<path to restore to>] <path to restore from>
+Usage: keeper.sh [options]
+    -h, --help           show this help message
+    -b, --backup         backup option [requires -t]
+    -r, --restore        restore option [requires -f]
+    -f, --from <path>    in case of restore, specify the backup file
+                         in case of backup its optional, specify the directory to start from [default=\$PWD]
+    -t, --to <path>      in case of backup, specify the name of the backup file
+                         in case of restore its optional, specify the directory to restore to [default=\$PWD]
 Optional:
---preview			preview the archive information, only available for zip and tar.gz
---profile=""		backup profile (what files to backup), default is 'default'
---format=""			backup format, default is 'zip'. other options are 'tar.gz'
--h					show this help message
+    --no-confirm         don't ask for confirmation before executing the backup/restore
+    --preview            preview the information about the backup/restore
+    --profile <profile>  backup profile (what files to backup), default is 'default'
+    --format <format>    backup format, options are 'zip' 'tar.gz'
 "
+}
+
+# @brief waits for any key to be pressed
+# @param $1 message the message to display
+press_to_confirm ()
+{
+	read -n 1 -s -r -p "$1"
+	echo
 }
 
 # @brief echo a message that an item has been backed up
@@ -90,6 +101,7 @@ check_if_archive_contains_file ()
 check_if_archive_is_valid ()
 {
 	local archive=$1
+	[[ ! $archive =~ \.(zip|tar.gz) ]] && return 1
 	check_if_archive_contains_file "$archive" ".archive.info"
 	return $?
 }
