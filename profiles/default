@@ -1,7 +1,7 @@
 # this is a default basic backup profile
 
 # @brief add $HOME .rc files
-add_home_dotfiles()
+default_home_dotfiles()
 {
 	local dirFrom="$HOME"
 	local dirTo=""
@@ -17,7 +17,7 @@ add_home_dotfiles()
 }
 
 # @brief add .config/ files
-add_config_files()
+default_config_files()
 {
 	local dirFrom="$HOME/.config"
 	local dirTo=".config"
@@ -33,36 +33,24 @@ add_config_files()
 		'.icons'
 		'latte*'
 		# tools
+		'htop'
+		'btop'
 		'alacritty'
 		'nvim'
 		'nautilus'
 		'xournalpp'
-		'vlc*'
+		'vlc'
 		'GIMP'
 		'libreoffice*'
-		# Desktop enviorment
+		# Desktop enviorment related
 		'gtkrc*'
 		'gtk-*'
 		'fontconfig'
-		# kde-plasma
-		'KDE'
-		'plasma*'
-		'Kvantum'
-		'kcminputrc'
-		'kdeglobals'
-		'kglobalshortcutsrc'
-		'klipperrc'
-		'krunnerrc'
-		'kscreenlockerrc'
-		'ksmserverrc'
-		'kwinrc'
-		'kwinrulesrc'
-		'khotkeysrc'
 	)
 	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
 }
 
-add_share_files()
+default_share_files()
 {
 	local dirFrom="$HOME/.local/share"
 	local dirTo=".local/share"
@@ -79,7 +67,7 @@ add_share_files()
 
 use_profile_backup ()
 {
-	add_home_dotfiles
-	add_config_files
-	add_share_files
+	default_home_dotfiles
+	default_config_files
+	default_share_files
 }

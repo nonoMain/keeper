@@ -1,0 +1,30 @@
+# this is a kde basic backup profile
+# @brief add .config/ files
+
+kde_config_files()
+{
+	local dirFrom="$HOME/.config"
+	local dirTo=".config"
+	local paths=(
+		# kde-plasma
+		'KDE'
+		'plasma*'
+		'Kvantum'
+		'kcminputrc'
+		'kdeglobals'
+		'kglobalshortcutsrc'
+		'klipperrc'
+		'krunnerrc'
+		'kscreenlockerrc'
+		'ksmserverrc'
+		'kwinrc'
+		'kwinrulesrc'
+		'khotkeysrc'
+	)
+	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
+}
+
+use_profile_backup ()
+{
+	kde_config_files
+}

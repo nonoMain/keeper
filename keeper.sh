@@ -43,14 +43,14 @@ add_entries_to_archive()
 	local paths=("$@")
 	for entrie in "${paths[@]}"; do
 		add_path_to_tmp_dir "$dirFrom/$entrie" "$dirTo/$entrie"
-		echo "Linked $entrie to $dirTo"
+		echo_msg "Linked $entrie to $dirTo"
 	done
 }
 
 # @brief a tmp function that will be replaced by the real one from the backup profile
 add_profile_backup ()
 {
-	echo "Err: No profile was loaded, exisiting"
+	echo_error_msg "No profile was loaded, exisiting"
 	exit
 }
 
@@ -100,29 +100,6 @@ run_restore ()
 }
 
 # --- Main section
-#[ $# -eq 0 ] && help_message && exit
-#[ $# -eq 1 ] && [[ "$1" =~ ^(-h|--help)$ ]] && help_message && exit
-#
-#if [[ "$1" =~ ^(--preview)$ ]]; then
-#		echo "TODO: Preview $2"
-#		exit
-#fi
-## $# is 2 or above
-#if [[ "$1" =~ ^(-b|--backup)$ ]]; then
-#	# 3 arguments means: the -b option, the path to start from and the archive path
-#	# 2 arguments means: the -b option and the archive path
-#	if [[ $# -eq 3 ]]; then
-#		local pathToStartFrom=$2
-#		if [[ -d $pathToStartFrom ]]; then
-#		else
-#		echo "Err: $pathToStartFrom directory does not exist"
-#		exit
-#		fi
-#	fi
-#elif [[ "$1" =~ ^(-r|--restore)$ ]]; then
-#	echo "TODO: Restore"
-#fi
-
 ARGC=$#
 choose="" # can be either 'backup' or 'restore'
 pathFrom=""
@@ -139,7 +116,7 @@ while [ $# -gt 0 ]; do
 			;;
 		-b | --backup)
 			if [[ $choose == "restore" ]]; then
-				echo "Err: Can't do a backup and a restore at the same time"
+				echo_error_msg "Can't do a backup and a restore at the same time"
 				exit
 			fi
 			choose="backup"
@@ -147,7 +124,7 @@ while [ $# -gt 0 ]; do
 			;;
 		-r | --restore)
 			if [[ $choose == "backup" ]]; then
-				echo "Err: Can't do a backup and a restore at the same time"
+				echo_error_msg "Can't do a backup and a restore at the same time"
 				exit
 			fi
 			choose="restore"
@@ -158,8 +135,8 @@ while [ $# -gt 0 ]; do
 			exit
 			;;
 		--profile)
-			echo "TODO: Profile, don't use this option"
-			exit
+			config_backup_profile="$2"
+			shift 2 # shift 2 times to get rid of the option's value
 			;;
 		-f | --from)
 			pathFrom="$2"
@@ -175,52 +152,57 @@ while [ $# -gt 0 ]; do
 			break
 			;;
 		*)
-			echo "Err: Unknown option"
+			echo_error_msg "Unknown option"
 			help_message
 			exit
 			;;
 	esac
 done
 
-echo "# ---- errors/notes about options ---- #"
 case $choose in
 	backup)
-		[ -z "$pathTo" ] && echo "Err: No path to backup to was given" && help_message && exit
-		[[ ! $pathTo =~ \.(zip|tar.gz) ]] && echo "Err: Archive type not supported, must be .zip or .tar.gz" && help_message && exit
+		[ -z "$pathTo" ] && echo_error_msg "No path to backup to was given" && help_message && exit
+		[[ ! $pathTo =~ \.(zip|tar.gz) ]] && echo_error_msg "Archive type not supported, must be .zip or .tar.gz" && help_message && exit
 		# 'from' is optional
 		if [ -z "$pathFrom" ]; then
-			echo "Note: No path to start from was given, starting from current directory [$PWD]"
+			echo_warning_msg "Note: No path to start from was given, starting from current directory [$PWD]"
 			pathFrom="$PWD"
 		else
 			if [[ ! -d $pathFrom ]]; then
-				echo "Err: $pathFrom is not a directory"
+				echo_error_msg "$pathFrom is not a directory"
 				help_message
 				exit
 			fi
 		fi
 		;;
 	restore)
-		[ -z "$pathFrom" ] && echo "Err: No path to restore from was given" && help_message && exit
-		[ ! -f "$pathFrom" ] && echo "Err: $pathFrom is not a file [required by restore option]" && help_message && exit
-		[ $(check_if_archive_is_valid "$pathFrom") ] || echo "Err: $pathFrom is not a valid archive to restore from [Note: an archive must contain certain things, look at the README.md]" && exit
+		[ -z "$pathFrom" ] && echo_error_msg "No path to restore from was given" && help_message && exit
+		[ ! -f "$pathFrom" ] && echo_error_msg "$pathFrom is not a file [required by restore option]" && help_message && exit
+		[ $(check_if_archive_is_valid "$pathFrom") ] || echo_error_msg "$pathFrom is not a valid archive to restore from [Note: an archive must contain certain things, look at the README.md]" && exit
 		# 'to' is optional
 		if [ -z "$pathTo" ]; then
-			echo "Note: No path to restore to was given, restoring to current directory [$PWD]"
+			echo_warning_msg "Note: No path to restore to was given, restoring to current directory [$PWD]"
 			pathTo="$PWD"
 		else
 			if [[ ! -d $pathTo ]]; then
-				echo "Err: $pathTo is not a directory"
+				echo_error_msg "$pathTo is not a directory"
 				help_message
 				exit
 			fi
 		fi
 		;;
 	*)
-		echo "Err: You need to specify 'backup' or 'restore' option"
+		echo_error_msg "You need to specify 'backup' or 'restore' option"
 		help_message
 		exit
 		;;
 esac
 
-echo "# ---- actual run ---- #"
-[ $config_no_confirm == 1 ] || press_to_confirm "Are you sure you want to $choose?, press [ANY KEY] to continue"
+if [[ ! -f "$SCRIPT_DIR"/profiles/"$config_backup_profile" ]]; then
+	echo_error_msg "$config_backup_profile does not exist inside $SCRIPT_DIR/profiles/"
+	exit
+fi
+if [[ $config_no_confirm == 0 ]]; then
+	echo_msg "Are you sure you want to $choose?"
+	wait_for_any_key_press "press [ANY KEY] to continue"
+fi

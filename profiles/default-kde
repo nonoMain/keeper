@@ -1,0 +1,15 @@
+# this is a merge between the default and the kde
+# backup profiles
+
+source $SCRIPT_DIR/profiles/default
+source $SCRIPT_DIR/profiles/kde
+
+use_profile_backup ()
+{
+	# default profile
+	default_home_dotfiles
+	default_config_files
+	default_share_files
+	# kde profile
+	kde_config_files
+}

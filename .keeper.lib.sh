@@ -1,5 +1,7 @@
 # this file contains functions that are sourced to the main program
 
+source $SCRIPT_DIR/.base.lib.sh
+
 # @brief prints the usage & help of the program
 help_message ()
 {
@@ -17,16 +19,7 @@ Optional:
     --no-confirm         don't ask for confirmation before executing the backup/restore
     --preview            preview the information about the backup/restore
     --profile <profile>  backup profile (what files to backup), default is 'default'
-    --format <format>    backup format, options are 'zip' 'tar.gz'
 "
-}
-
-# @brief waits for any key to be pressed
-# @param $1 message the message to display
-press_to_confirm ()
-{
-	read -n 1 -s -r -p "$1"
-	echo
 }
 
 # @brief echo a message that an item has been backed up
@@ -36,7 +29,7 @@ added_to_archive_message ()
 {
 	local thing="$1"
 	local archive="$2"
-	echo "Added $thing to $archive"
+	echo_msg "Added $thing to $archive"
 }
 
 # @brief creates a tmp directory and echo the path
@@ -44,15 +37,6 @@ added_to_archive_message ()
 generate_tmp_dir ()
 {
 	echo "$(mktemp -d)"
-}
-
-# @brief echo the full path of a given path
-# @param $1 path to the file
-get_full_path ()
-{
-	cd $(dirname $1)
-	echo "$PWD/$(basename $1)"
-	cd $OLDPWD
 }
 
 # @brief adds files/directories from the path to the backup archive at the given path
@@ -154,7 +138,7 @@ make_archive_with_first_file ()
 			tar -czf $archive $(basename $firstFile)
 			;;
 	esac
-	echo "Created $archive and inserted $path to it"
+	echo_ok_msg "Created $archive and inserted $path to it"
 	cd $currentDir
 }
 
@@ -166,11 +150,11 @@ add_path_to_archive ()
 	local archive=$1
 	local path=$2
 	local currentDir=$PWD
-	[ ! -d $path ] && echo "cannot cd into $path" && return
+	[ ! -d $path ] && echo_error_msg "cannot cd into $path" && return
 	case "$archive" in
 		*.zip)
 			cd "$path"
-			zip -r $archive .
+			zip -r $archive . 1> /dev/null
 			cd $currentDir
 			;;
 		*.tar.gz)
@@ -178,14 +162,14 @@ add_path_to_archive ()
 			local tmpDir=$(generate_tmp_dir)
 			cp $archive $tmpDir
 			#cp -r "$path"/* "$path"/.[a-zA-Z]* $tmpDir
-			cp -r "$path/".[a-zA-Z]* $tmpDir || echo "Faild to find files matching '.[a-zA-Z]*'"
-			cp -r "$path/"* $tmpDir || echo "Faild to find files matching '*'"
+			cp -r "$path/".[a-zA-Z]* $tmpDir || echo_error_msg "Faild to find files matching '.[a-zA-Z]*'"
+			cp -r "$path/"* $tmpDir || echo_error_msg "Faild to find files matching '*'"
 			cd $tmpDir
-			tar -xzf $archive
+			tar -xzf $archive 1> /dev/null
 			rm -rf $(basename $archive)
 			# now tmpDir contains the prev archive with the stuff from the new path
 			# so we can recreate the archive with the new stuff
-			tar -chzf $archive .
+			tar -chzf $archive . 1> /dev/null
 			cd $OLDPWD
 			;;
 	esac

@@ -1,4 +1,4 @@
-# Keeper.git
+# keeper.git
 This is a bash script utility that backs up or loads
 the files that you specify to wherever you specify
 
@@ -36,7 +36,6 @@ Optional:
 --no-confirm         don't ask for confirmation before executing the backup/restore
 --preview            preview the information about the backup/restore
 --profile <profile>  backup profile (what files to backup), default is 'default'
---format <format>    backup format, options are 'zip' 'tar.gz'
 ```
 
 # What can be backed up?
@@ -50,8 +49,9 @@ from them how to create your own.
 - [x] different archive types (.zip, .tar.gz)
 - [x] execute purely from command line arguments
 - [x] test if a certain [external] archive is valid
-- [ ] support other backup profiles
-- [ ] choose a backup profile
+- [x] support other backup profiles
+- [x] choose a backup profile
+- [ ] preview archive information
 - [ ] use backup profiles also to restore (instead of just restoring everything that inside)
 - [ ] edit the content when restoring a backup according to the new user
 
