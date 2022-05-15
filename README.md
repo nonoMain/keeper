@@ -53,12 +53,15 @@ from them how to create your own.
 # Features
 - [x] different archive types (.zip, .tar.gz)
 - [x] execute purely from command line arguments
-- [x] test if a certain [external] archive is valid
-- [x] support other backup profiles
+- [x] support external archive profiles [look here for more information](./PROFILES.md)
 - [x] choose a backup profile
 - [x] preview archive information
 - [ ] edit the content when restoring a backup according to the new user
 - [ ] use backup profiles also to restore (instead of just restoring everything that inside)
+
+# Create you own profiles
+you can easily make your own archive profiles just look on the [doc](./PROFILES.md)
+and look at the already existing [profiles](./profiles/) for ideas.
 
 # Archive internals
 with the knowledge about the layout and the parts you can create your own archives without
@@ -100,6 +103,5 @@ alongside my archive.info file so its best that you'll look into it"
 ```
 |- <archive-name>/            The archive
 |  |- archive.info            File that contains the information about the archive
-|  |- backup-root/            Directory that contains all the files and directories
-|  |                           that will be copied to the destination
+|  |- all the other the stuff
 ```
