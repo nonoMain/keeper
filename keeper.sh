@@ -64,10 +64,10 @@ generate_info_file ()
 	local archiveinfoPath="$dirForInfo/archive.info"
 	cat > $archiveinfoPath <<EOF
 # default archive.info file
-archive-creator=$USER
-date-created=$(date +%Y-%m-%d)
+creator='$USER'
+dateArchiveCreated='$(date +%Y-%m-%d)'
 doc='backup made by $USER on $HOSTNAME'
-message=$message
+message='$message'
 EOF
 	echo $archiveinfoPath
 }
@@ -109,6 +109,15 @@ run_restore ()
 	archivePath=$(get_full_path "$archivePath")
 	# restore
 	restore_archive "$archivePath" "$destPath"
+	source_archive_info_file "$archivePath"
+	if [[ $sed_home_path -eq 1 ]] && [[ "$creator" != "$USER" ]]; then
+		echo_warning_msg "replacing $creator with $USER on all archive files in $destPath"
+		list_archive_contents "$archivePath" | while read file; do
+		if [[ -f "$destPath"/"$file" ]]; then
+			sed -i "s|/home/$creator|/home/$USER|g" "$destPath"/"$file"
+		fi
+	done
+	fi
 }
 
 # --- Main section
@@ -117,6 +126,7 @@ choose="" # can be either 'backup' or 'restore'
 pathFrom=""
 pathTo=""
 archive_info_msg="No message to display"
+sed_home_path=0
 to_preview=0
 while [ $# -gt 0 ]; do
 	case $1 in
@@ -151,6 +161,10 @@ while [ $# -gt 0 ]; do
 				exit
 			fi
 			choose="restore"
+			shift
+			;;
+		--sed-home-path)
+			sed_home_path=1
 			shift
 			;;
 		--preview)
@@ -239,6 +253,9 @@ if [[ $config_no_confirm == 0 ]]; then
 		echo_msg "will backup to: $pathTo from $pathFrom"
 	elif [[ $choose == "restore" ]]; then
 		echo_msg "will restore from: $pathFrom to $pathTo"
+		if [[ $sed_home_path == 1 ]]; then
+			echo_msg "will replace the old home path with the new one (if they are different)"
+		fi
 		if [[ $to_preview == 1 ]]; then
 			echo_msg "Preview archive info:"
 			echo -e "${BLUE}"

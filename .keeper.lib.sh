@@ -32,6 +32,9 @@ Optional:
     --no-color           don't use colors in output
     --preview            preview the information about the backup/restore
     -m, --message <msg>  in case of backup, the message to be added to the backup file (to be previewed)
+    --sed-home-path      will replace the old home path with the new one on all the files from the archive
+                         mainly used for images and files that were written as in /home/<old_user> inside
+                         config files and now are in /home/<new_user>
 
 ** Note: you cannot combine options as one argument (e.g. -r + -r -rm) **
 "
@@ -79,7 +82,7 @@ list_archive_contents ()
 	local archive=$1
 	case "$archive" in
 		*.zip)
-			unzip -l $archive
+			unzip -l $archive | awk '{$1=$2=$3=""; print $0}'
 			;;
 		*.tar.gz)
 			tar -tzf $archive
@@ -129,6 +132,26 @@ check_if_archive_is_valid ()
 	return $?
 }
 
+source_archive_info_file ()
+{
+	local archive=$1
+	local file="archive.info"
+	local tmpDir=$(generate_tmp_dir)
+	cd $tmpDir
+	case "$archive" in
+		*.zip)
+			unzip -o $archive $file
+			source $file
+			;;
+		*.tar.gz)
+			tar -xzf $archive "./$file"
+			source $file
+			;;
+	esac
+	cd $OLDPWD
+	rm -rf $tmpDir
+}
+
 list_profiles ()
 {
 	echo_msg "Available profiles:"
@@ -157,10 +180,10 @@ restore_archive ()
 	cd "$path"
 	case "$archive" in
 		*.zip)
-			unzip -o $archive
+			unzip -o $archive 1>/dev/null
 			;;
 		*.tar.gz)
-			tar -xzf $archive
+			tar -xzf $archive 1>/dev/null
 			;;
 	esac
 	cd $currentDir

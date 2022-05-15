@@ -39,6 +39,9 @@ Optional:
 --no-color           don't use colors in output
 --preview            preview the information about the backup/restore
 -m, --message <msg>  in case of backup, the message to be added to the backup file (to be previewed)
+--sed-home-path      will replace the old home path with the new one on all the files from the archive
+                     mainly used for images and files that were written as in /home/<old_user> inside
+                     config files and now are in /home/<new_user>
 
 ** Note: you cannot combine options as one argument (e.g. -r + -r -rm) **
 ```
@@ -56,8 +59,7 @@ from them how to create your own.
 - [x] support external archive profiles [look here for more information](./PROFILES.md)
 - [x] choose a backup profile
 - [x] preview archive information
-- [ ] edit the content when restoring a backup according to the new user
-- [ ] use backup profiles also to restore (instead of just restoring everything that inside)
+- [x] edit the content when restoring a backup according to the new user
 
 # Create you own profiles
 you can easily make your own archive profiles just look on the [doc](./PROFILES.md)
@@ -84,18 +86,19 @@ when creating a backup (located in <archive-dir>/archive.info)
 so for an archive.info for a backup today will look like:
 ```sh
 # default archive.info file
-archive-creator='<username>'
-date-created='13/05/22'
-doc='backup made by <username> on <hostname>'
+creator='$USER'
+dateArchiveCreated='$(date +%Y-%m-%d)'
+doc='backup made by $USER on $HOSTNAME'
+message='<message>'
 ```
 ### Example archive information file
 ```sh
 # example of a archive.info file
-archive-creator='nonoma1n'
+creator='nonoma1n'
 # date format isn't specific
-date-created='13/05/22'
-# adding a list of packages that this backup requires or anything in that style is optional
-doc="kde setup backup - need to install latte-dock and hack nerd-font in order to use it
+dateArchiveCreated='13/05/22'
+doc='backup made by nonomain on arch-machine'
+message="kde setup backup - need to install latte-dock and hack nerd-font in order to use it
 **note** I also have a list of all the required packages to install in 'required.txt'
 alongside my archive.info file so its best that you'll look into it"
 ```
