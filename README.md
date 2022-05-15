@@ -25,17 +25,22 @@ Examples
 Usage
 ```
 Usage: keeper.sh [options]
--h, --help           show this help message
 -b, --backup         backup option [requires -t]
 -r, --restore        restore option [requires -f]
 -f, --from <path>    in case of restore, specify the backup file
                      in case of backup its optional, specify the directory to start from [default=\$PWD]
 -t, --to <path>      in case of backup, specify the name of the backup file
                      in case of restore its optional, specify the directory to restore to [default=\$PWD]
+-h, --help           show this help message
+--profiles           show the available profiles
 Optional:
---no-confirm         don't ask for confirmation before executing the backup/restore
---preview            preview the information about the backup/restore
 --profile <profile>  backup profile (what files to backup), default is 'default'
+--no-confirm         don't ask for confirmation before executing the backup/restore
+--no-color           don't use colors in output
+--preview            preview the information about the backup/restore
+-m, --message <msg>  in case of backup, the message to be added to the backup file (to be previewed)
+
+** Note: you cannot combine options as one argument (e.g. -r + -r -rm) **
 ```
 
 # What can be backed up?
@@ -51,9 +56,9 @@ from them how to create your own.
 - [x] test if a certain [external] archive is valid
 - [x] support other backup profiles
 - [x] choose a backup profile
-- [ ] preview archive information
-- [ ] use backup profiles also to restore (instead of just restoring everything that inside)
+- [x] preview archive information
 - [ ] edit the content when restoring a backup according to the new user
+- [ ] use backup profiles also to restore (instead of just restoring everything that inside)
 
 # Archive internals
 with the knowledge about the layout and the parts you can create your own archives without

@@ -54,10 +54,11 @@ add_profile_backup ()
 	exit
 }
 
-# @brief initializes archive with the archive.info file
-create_archive ()
+# @brief genereate a info file about the archive and echo the path to it
+# @param $1 message to include in the info file
+generate_info_file ()
 {
-	local archivePath="$1"
+	local message="$1"
 	local dirForInfo=$(generate_tmp_dir)
 	touch "$dirForInfo/archive.info"
 	local archiveinfoPath="$dirForInfo/archive.info"
@@ -66,21 +67,33 @@ create_archive ()
 archive-creator=$USER
 date-created=$(date +%Y-%m-%d)
 doc='backup made by $USER on $HOSTNAME'
+message=$message
 EOF
-	make_archive_with_first_file "$archivePath" "$archiveinfoPath"
-	rm -rf $dirForInfo
+	echo $archiveinfoPath
+}
+
+# @brief initializes archive with the archive.info file
+# @param $1 path to the wanted archive
+# @param $2 message to include in the info file
+create_archive ()
+{
+	local archivePath="$1"
+	local archive_info_message="$2"
+	local infoFile=$(generate_info_file "$archive_info_message")
+	make_archive_with_first_file "$archivePath" "$infoFile"
+	rm -rf $(dirname $infoFile)
 }
 
 run_backup ()
 {
 	local pathToStartFrom="$1"
-	local archivePath=$2
+	local archivePath="$2"
+	local info_message="$3"
+	archivePath=$(get_full_path "$archivePath")
 	local currentDir=$(pwd)
 	cd $pathToStartFrom
 	TMP_DIR=$(generate_tmp_dir)
-	echo "Starting backup"
-	archivePath=$(get_full_path "$archivePath")
-	create_archive $archivePath
+	create_archive $archivePath "$info_message"
 	# backup
 	backup_profile $config_backup_profile
 	# add all the files in $TMP_DIR to the archive
@@ -91,7 +104,6 @@ run_backup ()
 
 run_restore ()
 {
-	echo "Starting restore"
 	local archivePath=$1
 	local destPath=$2
 	archivePath=$(get_full_path "$archivePath")
@@ -104,14 +116,25 @@ ARGC=$#
 choose="" # can be either 'backup' or 'restore'
 pathFrom=""
 pathTo=""
+archive_info_msg="No message to display"
+to_preview=0
 while [ $# -gt 0 ]; do
 	case $1 in
 		-h | --help)
 			help_message
 			exit
 			;;
+		--profiles)
+			list_profiles
+			exit
+			;;
 		--no-confirm)
 			config_no_confirm=1
+			shift
+			;;
+		--no-color)
+			NO_COLOR=1
+			bash_lib_define_colors
 			shift
 			;;
 		-b | --backup)
@@ -131,8 +154,8 @@ while [ $# -gt 0 ]; do
 			shift
 			;;
 		--preview)
-			echo "TODO: Preview, don't use this option"
-			exit
+			to_preview=1
+			shift
 			;;
 		--profile)
 			config_backup_profile="$2"
@@ -144,6 +167,10 @@ while [ $# -gt 0 ]; do
 			;;
 		-t | --to)
 			pathTo="$2"
+			shift 2 # shift 2 times to get rid of the option's value
+			;;
+		-m | --message)
+			archive_info_message="$2"
 			shift 2 # shift 2 times to get rid of the option's value
 			;;
 		-- )
@@ -163,6 +190,7 @@ case $choose in
 	backup)
 		[ -z "$pathTo" ] && echo_error_msg "No path to backup to was given" && help_message && exit
 		[[ ! $pathTo =~ \.(zip|tar.gz) ]] && echo_error_msg "Archive type not supported, must be .zip or .tar.gz" && help_message && exit
+		[[ -d "$(dirname $pathTo)" ]] || mkdir -p "$(dirname $pathTo)"
 		# 'from' is optional
 		if [ -z "$pathFrom" ]; then
 			echo_warning_msg "Note: No path to start from was given, starting from current directory [$PWD]"
@@ -174,11 +202,12 @@ case $choose in
 				exit
 			fi
 		fi
+		echo_ok_msg "Backup detected and all options are valid"
 		;;
 	restore)
 		[ -z "$pathFrom" ] && echo_error_msg "No path to restore from was given" && help_message && exit
 		[ ! -f "$pathFrom" ] && echo_error_msg "$pathFrom is not a file [required by restore option]" && help_message && exit
-		[ $(check_if_archive_is_valid "$pathFrom") ] || echo_error_msg "$pathFrom is not a valid archive to restore from [Note: an archive must contain certain things, look at the README.md]" && exit
+		[ $(check_if_archive_is_valid "$pathFrom") ] || ( echo_error_msg "$pathFrom is not a valid archive to restore from [Note: an archive must contain certain things, look at the README.md]" && exit )
 		# 'to' is optional
 		if [ -z "$pathTo" ]; then
 			echo_warning_msg "Note: No path to restore to was given, restoring to current directory [$PWD]"
@@ -190,9 +219,9 @@ case $choose in
 				exit
 			fi
 		fi
+		echo_ok_msg "Restore detected and all options are valid"
 		;;
 	*)
-		echo_error_msg "You need to specify 'backup' or 'restore' option"
 		help_message
 		exit
 		;;
@@ -202,7 +231,25 @@ if [[ ! -f "$SCRIPT_DIR"/profiles/"$config_backup_profile" ]]; then
 	echo_error_msg "$config_backup_profile does not exist inside $SCRIPT_DIR/profiles/"
 	exit
 fi
+pathFrom=$(get_full_path "$pathFrom")
+pathTo=$(get_full_path "$pathTo")
 if [[ $config_no_confirm == 0 ]]; then
 	echo_msg "Are you sure you want to $choose?"
-	wait_for_any_key_press "press [ANY KEY] to continue"
+	if [[ $choose == "backup" ]]; then
+		echo_msg "will backup to: $pathTo from $pathFrom"
+	elif [[ $choose == "restore" ]]; then
+		echo_msg "will restore from: $pathFrom to $pathTo"
+		if [[ $to_preview == 1 ]]; then
+			echo_msg "Preview archive info:"
+			echo -e "${BLUE}"
+			display_file_from_archvie "$pathFrom" "archive.info"
+			echo -e "${NC}"
+		fi
+	fi
+	wait_for_any_key_press "press [ANY KEY] to continue.. "
+fi
+if [[ $choose == "backup" ]]; then
+	run_backup "$pathFrom" "$pathTo" "$archive_info_message"
+elif [[ $choose == "restore" ]]; then
+	run_restore "$pathFrom" "$pathTo"
 fi

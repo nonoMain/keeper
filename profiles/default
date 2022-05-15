@@ -23,7 +23,6 @@ default_config_files()
 	local dirTo=".config"
 	local paths=(
 		# rc files
-		'*rc'
 		'.bash_profile'
 		'.tmux.conf'
 		'.screenrc'
@@ -31,7 +30,9 @@ default_config_files()
 		'.fonts'
 		'.themes'
 		'.icons'
-		'latte*'
+		'latte'
+		'lattedockrc'
+		'spectaclerc'
 		# tools
 		'htop'
 		'btop'
@@ -40,8 +41,11 @@ default_config_files()
 		'nautilus'
 		'xournalpp'
 		'vlc'
+		'vlcrc'
 		'GIMP'
 		'libreoffice*'
+		'VirtualBoxVMrc'
+		'VirtualBoxrc'
 		# Desktop enviorment related
 		'gtkrc*'
 		'gtk-*'

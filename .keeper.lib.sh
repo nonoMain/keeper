@@ -1,5 +1,15 @@
 # this file contains functions that are sourced to the main program
 
+if [ -z "$SCRIPT_DIR" ]; then
+	SOURCE="${BASH_SOURCE[0]}"
+	while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+		DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+		SOURCE="$(readlink "$SOURCE")"
+		[[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+	done
+	DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+	SCRIPT_DIR="$DIR"
+fi
 source $SCRIPT_DIR/.base.lib.sh
 
 # @brief prints the usage & help of the program
@@ -8,17 +18,22 @@ help_message ()
 	echo \
 "
 Usage: keeper.sh [options]
-    -h, --help           show this help message
     -b, --backup         backup option [requires -t]
     -r, --restore        restore option [requires -f]
     -f, --from <path>    in case of restore, specify the backup file
                          in case of backup its optional, specify the directory to start from [default=\$PWD]
     -t, --to <path>      in case of backup, specify the name of the backup file
                          in case of restore its optional, specify the directory to restore to [default=\$PWD]
+    -h, --help           show this help message
+    --profiles           show the available profiles
 Optional:
-    --no-confirm         don't ask for confirmation before executing the backup/restore
-    --preview            preview the information about the backup/restore
     --profile <profile>  backup profile (what files to backup), default is 'default'
+    --no-confirm         don't ask for confirmation before executing the backup/restore
+    --no-color           don't use colors in output
+    --preview            preview the information about the backup/restore
+    -m, --message <msg>  in case of backup, the message to be added to the backup file (to be previewed)
+
+** Note: you cannot combine options as one argument (e.g. -r + -r -rm) **
 "
 }
 
@@ -79,7 +94,31 @@ check_if_archive_contains_file ()
 {
 	local archive=$1
 	local file=$2
-	list_archive_contents "$archive" | grep -q $file && return $?
+	list_archive_contents "$archive" | grep -q $file
+	if [ $? -eq 1 ]; then
+		echo 0
+	else
+		echo 1
+	fi
+}
+
+display_file_from_archvie ()
+{
+	local archive=$1
+	local file=$2
+	case "$archive" in
+		*.zip)
+			unzip -p $archive $file
+			;;
+		*.tar.gz)
+			local tmpDir=$(generate_tmp_dir)
+			cd $tmpDir
+			tar -xzf $archive "./$file"
+			cat $file
+			cd $OLDPWD
+			rm -rf $tmpDir
+			;;
+	esac
 }
 
 check_if_archive_is_valid ()
@@ -88,6 +127,12 @@ check_if_archive_is_valid ()
 	[[ ! $archive =~ \.(zip|tar.gz) ]] && return 1
 	check_if_archive_contains_file "$archive" ".archive.info"
 	return $?
+}
+
+list_profiles ()
+{
+	echo_msg "Available profiles:"
+	ls $SCRIPT_DIR/profiles
 }
 
 # @brief source and backup using the given profile
@@ -112,10 +157,10 @@ restore_archive ()
 	cd "$path"
 	case "$archive" in
 		*.zip)
-			unzip -o $archive .
+			unzip -o $archive
 			;;
 		*.tar.gz)
-			tar -xzf $archive .
+			tar -xzf $archive
 			;;
 	esac
 	cd $currentDir
@@ -132,10 +177,10 @@ make_archive_with_first_file ()
 	cd $(dirname $firstFile)
 	case "$archive" in
 		*.zip)
-			zip -r $archive $(basename $firstFile)
+			zip -r $archive $(basename $firstFile) 1> /dev/null
 			;;
 		*.tar.gz)
-			tar -czf $archive $(basename $firstFile)
+			tar -czf $archive $(basename $firstFile) 1> /dev/null
 			;;
 	esac
 	echo_ok_msg "Created $archive and inserted $path to it"
@@ -162,8 +207,8 @@ add_path_to_archive ()
 			local tmpDir=$(generate_tmp_dir)
 			cp $archive $tmpDir
 			#cp -r "$path"/* "$path"/.[a-zA-Z]* $tmpDir
-			cp -r "$path/".[a-zA-Z]* $tmpDir || echo_error_msg "Faild to find files matching '.[a-zA-Z]*'"
-			cp -r "$path/"* $tmpDir || echo_error_msg "Faild to find files matching '*'"
+			cp -r "$path/".[a-zA-Z]* $tmpDir &> /dev/null || echo_warning_msg "Faild to find files matching '.[a-zA-Z]*'"
+			cp -r "$path/"* $tmpDir &> /dev/null || echo_warning_msg "Faild to find files matching '*'"
 			cd $tmpDir
 			tar -xzf $archive 1> /dev/null
 			rm -rf $(basename $archive)
