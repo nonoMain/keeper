@@ -1,5 +1,5 @@
 # Archive profiles
-This are the files that specify what files will be backed up
+These are the files that specify what files will be backed up
 
 ## How to create one
 First of all you should know where this file is going to run and what tools you got
@@ -27,3 +27,26 @@ of the archive profile.
 It should call all the functions that list your target files
 look on the [function](https://github.com/nonoMain/keeper/blob/master/profiles/default#L72-L77) in the default profile for an example on how to use it
 if you want to merge multiple profiles then look [here](./profiles/default-kde) to see how I did it.
+
+## Code example
+```bash
+# @brief add files to the archive
+example_dotfiles ()
+{
+	local dirFrom="./" # take them from the current directory
+	local dirTo="" # copy them to the archive root
+	local paths=(
+		# rc files
+		'.bashrc'
+		'.zshrc'
+		'.vimrc'
+	)
+	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
+}
+
+
+use_profile_backup ()
+{
+	example_dotfiles
+}
+```

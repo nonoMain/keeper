@@ -1,4 +1,4 @@
-# this is a kde basic backup profile
+# this is a kde basic backup profile (written in BASH)
 # @brief add .config/ files
 
 kde_config_files()

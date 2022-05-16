@@ -1,4 +1,4 @@
-# this is a merge between the default and the kde
+# this is a merge between the default and the kde (written in BASH)
 # backup profiles
 
 source $SCRIPT_DIR/profiles/default

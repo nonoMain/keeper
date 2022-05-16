@@ -1,4 +1,4 @@
-# this is a default basic backup profile
+# this is a default basic backup profile (written in BASH)
 
 # @brief add $HOME .rc files
 default_home_dotfiles()

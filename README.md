@@ -2,8 +2,6 @@
 This is a bash script utility that backs up or loads
 the files that you specify to wherever you specify
 
-(on testing stages, no main function or restore abilities)
-
 <p align="center">
   <img src="https://img.shields.io/github/repo-size/nonomain/keeper?style=for-the-badge">
 </p>
