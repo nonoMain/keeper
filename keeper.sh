@@ -43,7 +43,7 @@ add_entries_to_archive()
 	local paths=("$@")
 	for entrie in "${paths[@]}"; do
 		add_path_to_tmp_dir "$dirFrom/$entrie" "$dirTo/$entrie"
-		echo_msg "Linked $entrie to $dirTo"
+		echo_msg "Linked $dirFrom/$entrie to $dirTo"
 	done
 }
 
@@ -65,7 +65,7 @@ generate_info_file ()
 	cat > $archiveinfoPath <<EOF
 # default archive.info file
 creator='$USER'
-dateArchiveCreated='$(date +%Y-%m-%d)'
+date_archive_created='$(date +%Y-%m-%d)'
 doc='backup made by $USER on $HOSTNAME'
 message='$message'
 EOF
@@ -183,6 +183,11 @@ while [ $# -gt 0 ]; do
 			to_preview=1
 			shift
 			;;
+		--only-preview)
+			to_preview=1
+			dont_run=1
+			shift
+			;;
 		--profile)
 			config_backup_profile="$2"
 			shift 2 # shift 2 times to get rid of the option's value
@@ -259,26 +264,23 @@ if [[ ! -f "$SCRIPT_DIR"/profiles/"$config_backup_profile" ]]; then
 fi
 pathFrom=$(get_full_path "$pathFrom")
 pathTo=$(get_full_path "$pathTo")
-if [[ $config_no_confirm == 0 ]]; then
-	echo_msg "Are you sure you want to $choose?"
-	if [[ $choose == "backup" ]]; then
-		echo_msg "will backup to: $pathTo from $pathFrom"
-	elif [[ $choose == "restore" ]]; then
-		echo_msg "will restore from: $pathFrom to $pathTo"
-		if [[ $sed_home_path == 1 ]]; then
-			echo_msg "will replace the old home path with the new one (if they are different)"
-		fi
-		if [[ $to_preview == 1 ]]; then
-			echo_msg "Preview archive info:"
-			echo -e "${BLUE}"
-			preview_archive_details "$pathFrom"
-			echo -e "${NC}"
-		fi
+if [[ $choose == "backup" ]]; then
+	echo_msg "will backup to: $pathTo from $pathFrom"
+elif [[ $choose == "restore" ]]; then
+	echo_msg "will restore from: $pathFrom to $pathTo"
+	if [[ $sed_home_path == 1 ]]; then
+		echo_msg "will replace the old home path with the new one (if they are different)"
 	fi
-	wait_for_any_key_press "press [ANY KEY] to continue.. "
+	if [[ $to_preview == 1 ]]; then
+		echo_msg "Preview archive info:"
+		echo -e "${BLUE}"
+		preview_archive_details "$pathFrom"
+		echo -e "${NC}"
+	fi
 fi
 
 [[ $dont_run == 1 ]] && exit
+[ $config_no_confirm == 0 ] && wait_for_any_key_press "press [ANY KEY] to continue.. "
 
 if [[ $choose == "backup" ]]; then
 	run_backup "$pathFrom" "$pathTo" "$archive_info_message"

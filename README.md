@@ -35,12 +35,13 @@ Optional:
 --profile <profile>  backup profile (what files to backup), default is 'default'
 --no-confirm         don't ask for confirmation before executing the backup/restore
 --no-color           don't use colors in output
---preview            preview the information about the backup/restore before running it
---dont-run           don't run the backup/restore, just show the information
+--preview            preview information about the backup/restore before running it [requires -b or -r]
+--dont-run           run everything but the backup/restore
+--only-preview       calls --preview and --dont-run [requires -b or -r]
 -m, --message <msg>  in case of backup, the message to be added to the backup file (to be previewed)
 --sed-home-path      will replace the old home path with the new one inside all the files from the archive
-                     mainly used for images and files that were written as in /home/<old_user> inside
-                     config files and now are in /home/<new_user>
+                         mainly used for images and files that were written as in /home/<old_user> inside
+                         config files and now are in /home/<new_user>
 
 ** Note: you cannot combine options as one command line argument e.g: **
 Good:
@@ -74,15 +75,9 @@ using the script and modify existing backups to work with it
 ## Archive info file
 *this file will contain information that helps keeper to present and use the archive*
 (it is located in <archive-dir>/archive.info)
-> you can add to this file other stuff outside of what listed in the description
-### archive.info terms:
-* archive-creator - the username of the user that this backup came from, this will be used to
-                   edit some files and correct the path inside them from /home/<olduser>
-                   to /home/<newuser> in the case where the usernames are different
-* date-created    - the date that the archive was created in, will be shown to the user before
-                   restoring from this archive
-* doc             - a short description about this archive and important notes if there are any
-                   will be shown to the user before restoring from this archive
+> you can add to this file other stuff outside of what listed in the example
+> 'creator' field is required if you want to use the --sed-home-path option
+
 ### default archive information file
 the default file will insert the archive-creator and the date information
 when creating a backup (located in <archive-dir>/archive.info)
@@ -90,16 +85,17 @@ so for an archive.info for a backup today will look like:
 ```sh
 # default archive.info file
 creator='$USER'
-dateArchiveCreated='$(date +%Y-%m-%d)'
+date_archive_created='$(date +%Y-%m-%d)'
 doc='backup made by $USER on $HOSTNAME'
 message='<message>'
 ```
 ### Example archive information file
 ```sh
 # example of a archive.info file
+# The $USER that created the backup
 creator='nonoma1n'
 # date format isn't specific
-dateArchiveCreated='13/05/22'
+date_archive_created='13/05/22'
 doc='backup made by nonomain on arch-machine'
 message="kde setup backup - need to install latte-dock and hack nerd-font in order to use it
 **note** I also have a list of all the required packages to install in 'required.txt'
