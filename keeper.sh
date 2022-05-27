@@ -117,13 +117,22 @@ run_restore ()
 	# restore
 	restore_archive "$archivePath" "$destPath"
 	source_archive_info_file "$archivePath"
-	if [[ $sed_home_path -eq 1 ]] && [[ "$creator" != "$USER" ]]; then
-		echo_warning_msg "replacing $creator with $USER on all archive files in $destPath"
-		list_archive_contents "$archivePath" | while read file; do
-		if [[ -f "$destPath"/"$file" ]]; then
-			sed -i "s|/home/$creator|/home/$USER|g" "$destPath"/"$file"
+
+	# --sed-home-path
+	echo_msg "Sed home path:"
+	if [[ $sed_home_path -eq 1 ]]; then
+		if [[ -z "$creator" ]]; then
+			echo_error_msg "No creator was found in the archive.info file"
+		elif [[ "$creator" == "$USER" ]]; then
+			echo_warning_msg "The archive was made by a creator named $creator, so no changes will be made"
+		else
+			echo_warning_msg "replacing $creator with $USER on all archive files in $destPath"
+			list_archive_contents "$archivePath" | while read file; do
+			if [[ -f "$destPath"/"$file" ]]; then
+				sed -i "s|/home/$creator|/home/$USER|g" "$destPath"/"$file"
+			fi
+			done
 		fi
-	done
 	fi
 }
 
