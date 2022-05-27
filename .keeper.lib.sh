@@ -37,7 +37,11 @@ Optional:
                          mainly used for images and files that were written as in /home/<old_user> inside
                          config files and now are in /home/<new_user>
 
-** Note: you cannot combine options as one argument (e.g. -r + -r -rm) **
+** Note: you cannot combine options as one command line argument e.g: **
+Good:
+    keeper.sh -b -f $HOME -t /tmp/backup.tar.gz
+Bad:
+    keeper.sh -bf $HOME -t /tmp/backup.tar.gz
 "
 }
 
