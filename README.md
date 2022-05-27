@@ -35,9 +35,10 @@ Optional:
 --profile <profile>  backup profile (what files to backup), default is 'default'
 --no-confirm         don't ask for confirmation before executing the backup/restore
 --no-color           don't use colors in output
---preview            preview the information about the backup/restore
+--preview            preview the information about the backup/restore before running it
+--dont-run           don't run the backup/restore, just show the information
 -m, --message <msg>  in case of backup, the message to be added to the backup file (to be previewed)
---sed-home-path      will replace the old home path with the new one on all the files from the archive
+--sed-home-path      will replace the old home path with the new one inside all the files from the archive
                      mainly used for images and files that were written as in /home/<old_user> inside
                      config files and now are in /home/<new_user>
 

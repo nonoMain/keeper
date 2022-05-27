@@ -84,6 +84,13 @@ create_archive ()
 	rm -rf $(dirname $infoFile)
 }
 
+# @brief echos the archive.info file from the archive
+# @param $1 path to the archive
+preview_archive_details ()
+{
+	display_file_from_archvie "$1" "archive.info"
+}
+
 run_backup ()
 {
 	local pathToStartFrom="$1"
@@ -128,6 +135,7 @@ pathTo=""
 archive_info_msg="No message to display"
 sed_home_path=0
 to_preview=0
+dont_run=0
 while [ $# -gt 0 ]; do
 	case $1 in
 		-h | --help)
@@ -165,6 +173,10 @@ while [ $# -gt 0 ]; do
 			;;
 		--sed-home-path)
 			sed_home_path=1
+			shift
+			;;
+		--dont-run)
+			dont_run=1
 			shift
 			;;
 		--preview)
@@ -259,12 +271,15 @@ if [[ $config_no_confirm == 0 ]]; then
 		if [[ $to_preview == 1 ]]; then
 			echo_msg "Preview archive info:"
 			echo -e "${BLUE}"
-			display_file_from_archvie "$pathFrom" "archive.info"
+			preview_archive_details "$pathFrom"
 			echo -e "${NC}"
 		fi
 	fi
 	wait_for_any_key_press "press [ANY KEY] to continue.. "
 fi
+
+[[ $dont_run == 1 ]] && exit
+
 if [[ $choose == "backup" ]]; then
 	run_backup "$pathFrom" "$pathTo" "$archive_info_message"
 elif [[ $choose == "restore" ]]; then
