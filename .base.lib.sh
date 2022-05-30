@@ -4,7 +4,7 @@
 # colors
 bash_lib_define_colors ()
 {
-	if [[ -z $NO_COLOR ]] || [[ $NO_COLOR == 0 ]]; then
+	if [[ -z $NO_COLOR ]]; then
 		RED='\033[0;31m'
 		GREEN='\033[0;32m'
 		YELLOW='\033[0;33m'

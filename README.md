@@ -16,8 +16,12 @@ Examples
 
 # restore my backup.zip to home directory
 ./keeper.sh -r [options] -f backup.zip
-# restore my backup.zip to specific directory
+# restore my backup.zip to a specific directory
 ./keeper.sh -r [options] -f backup.zip -t <specific directory>
+
+# restore my backup.zip to a specific directory from a script that restores that config to
+# a new user (at least that how I'd do it)
+./keeper.sh -r --no-confirm --sed-home-path -f backup.zip -t <specific directory>
 ```
 
 Usage
