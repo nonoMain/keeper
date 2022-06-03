@@ -61,7 +61,6 @@ default_share_files()
 	local dirTo=".local/share"
 	local paths=(
 		'fonts'
-		'plasma'
 		'color-schemes'
 		'icons'
 		'wallpapers'
