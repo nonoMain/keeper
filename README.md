@@ -35,7 +35,6 @@ Usage: keeper.sh [options]
                      in case of restore its optional, specify the directory to restore to [default=\$PWD]
 -h, --help           show this help message
 --profiles           show the available profiles
-Optional:
 --profile <profile>  backup profile (what files to backup), default is 'default'
 --no-confirm         don't ask for confirmation before executing the backup/restore
 --no-color           don't use colors in output
