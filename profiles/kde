@@ -6,40 +6,55 @@ kde_config_files()
 	local dirFrom="$HOME/.config"
 	local dirTo=".config"
 	local paths=(
-		# kde-plasma
-		'KDE'
-		'systemsettingsrc'
-		'plasma*'
-		'Kvantum'
+		'plasma-org.kde.plasma.desktop-appletsrc'
+		'plasmarc'
+		'plasmashellrc'
 		'kdeglobals'
-		'kdegraphicsrc'
-		'klipperrc'
 		'kwinrc'
 		'kwinrulesrc'
+		'lattedockrc'
+		'latte'
 		'dolphinrc'
+		'ksmserverrc'
+		'kcminputrc'
+		'kglobalshortcutsrc'
+		'klipperrc'
+		'kscreenlockerrc'
+		'systemsettingsrc'
+		'Kvantum'
+		'kdegraphicsrc'
 		'discoverrc'
 		'baloofilerc'
 		'kactivitymanagerd-statsrc'
 		'kactivitymanagerdrc'
 		'kalendaracrc'
 		'kateschemarc'
-		'kcminputrc'
 		'kconf_updaterc'
 		'kded5rc'
 		'kfontinstuirc'
 		'kgammarc'
-		'kglobalshortcutsrc'
 		'khotkeysrc'
 		'kmixrc'
 		'knotesrc'
 		'krunnerrc'
-		'kscreenlockerrc'
-		'ksmserverrc'
 		'ksplashrc'
 		'kwalletrc'
-		'kwinrc'
-		'kwinrulesrc'
 		'kxkbrc'
+		'autostart'
+	)
+	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
+}
+
+kde_share_files()
+{
+	local dirFrom="$HOME/.local/share"
+	local dirTo=".local/share"
+	local paths=(
+		'plasma'
+		'color-schemes'
+		'icons'
+		'wallpapers'
+		'fonts'
 	)
 	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
 }
@@ -47,4 +62,5 @@ kde_config_files()
 use_profile_backup ()
 {
 	kde_config_files
+	kde_share_files
 }
