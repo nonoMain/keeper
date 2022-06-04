@@ -1,0 +1,50 @@
+# this is a kde basic backup profile (written in BASH)
+# @brief add .config/ files
+
+kde_config_files()
+{
+	local dirFrom="$HOME/.config"
+	local dirTo=".config"
+	local paths=(
+		# kde-plasma
+		'KDE'
+		'systemsettingsrc'
+		'plasma*'
+		'Kvantum'
+		'kdeglobals'
+		'kdegraphicsrc'
+		'klipperrc'
+		'kwinrc'
+		'kwinrulesrc'
+		'dolphinrc'
+		'discoverrc'
+		'baloofilerc'
+		'kactivitymanagerd-statsrc'
+		'kactivitymanagerdrc'
+		'kalendaracrc'
+		'kateschemarc'
+		'kcminputrc'
+		'kconf_updaterc'
+		'kded5rc'
+		'kfontinstuirc'
+		'kgammarc'
+		'kglobalshortcutsrc'
+		'khotkeysrc'
+		'kmixrc'
+		'knotesrc'
+		'krunnerrc'
+		'kscreenlockerrc'
+		'ksmserverrc'
+		'ksplashrc'
+		'kwalletrc'
+		'kwinrc'
+		'kwinrulesrc'
+		'kxkbrc'
+	)
+	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
+}
+
+use_profile_backup ()
+{
+	kde_config_files
+}
