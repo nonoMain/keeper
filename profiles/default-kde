@@ -7,9 +7,11 @@ source $SCRIPT_DIR/profiles/kde
 use_profile_backup ()
 {
 	# default profile
-	default_home_dotfiles
+	default_home_files
 	default_config_files
 	default_share_files
 	# kde profile
+	kde_home_files
 	kde_config_files
+	kde_share_files
 }

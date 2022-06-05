@@ -35,7 +35,6 @@ Usage: keeper.sh [options]
                      in case of restore its optional, specify the directory to restore to [default=\$PWD]
 -h, --help           show this help message
 --profiles           show the available profiles
-Optional:
 --profile <profile>  backup profile (what files to backup), default is 'default'
 --no-confirm         don't ask for confirmation before executing the backup/restore
 --no-color           don't use colors in output
@@ -82,28 +81,21 @@ using the script and modify existing backups to work with it
 > you can add to this file other stuff outside of what listed in the example
 > 'creator' field is required if you want to use the --sed-home-path option
 
-### default archive information file
-the default file will insert the archive-creator and the date information
-when creating a backup (located in <archive-dir>/archive.info)
-so for an archive.info for a backup today will look like:
+### Archive information file
+the archive info file must be with the 4 first lines:
+1. comment line
+2. creator name
+3. date
+4. one line doc
+The other lines will be printed later as a message if preview is chosen
 ```sh
 # default archive.info file
 creator='$USER'
 date_archive_created='$(date +%Y-%m-%d)'
 doc='backup made by $USER on $HOSTNAME'
-message='<message>'
-```
-### Example archive information file
-```sh
-# example of a archive.info file
-# The $USER that created the backup
-creator='nonoma1n'
-# date format isn't specific
-date_archive_created='13/05/22'
-doc='backup made by nonomain on arch-machine'
-message="kde setup backup - need to install latte-dock and hack nerd-font in order to use it
-**note** I also have a list of all the required packages to install in 'required.txt'
-alongside my archive.info file so its best that you'll look into it"
+# Preview message
+This archive is for KDE and needs such and such
+packages, Enjoy
 ```
 ### Archive layout
 ```

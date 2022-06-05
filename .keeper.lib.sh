@@ -26,7 +26,6 @@ Usage: keeper.sh [options]
                          in case of restore its optional, specify the directory to restore to [default=\$PWD]
     -h, --help           show this help message
     --profiles           show the available profiles
-Optional:
     --profile <profile>  backup profile (what files to backup), default is 'default'
     --no-confirm         don't ask for confirmation before executing the backup/restore
     --no-color           don't use colors in output
@@ -73,11 +72,11 @@ add_path_to_dest_at ()
 	local dirAt=$(dirname "$pathAt")
 	[ ! -d $dirAt ] && mkdir -p $dirAt
 	if [[ "${pathFrom@Q}" =~ \* ]]; then
-		cd $dirAt
-		ln -sf ${pathFrom} $dirAt
-		cd $OLDPWD
+		echo_msg "Will expand & link $pathFrom to $dirAt"
+		ln -sf ${pathFrom} "$dirAt"
 	elif [[ -e "$pathFrom" ]]; then
-		ln -sf $pathFrom $pathAt
+		echo_msg "Linking $pathFrom to $pathAt"
+		ln -sf "$pathFrom" "$pathAt"
 	fi
 }
 
@@ -111,7 +110,7 @@ check_if_archive_contains_file ()
 	fi
 }
 
-display_file_from_archvie ()
+display_file_from_archive ()
 {
 	local archive=$1
 	local file=$2
@@ -138,7 +137,7 @@ check_if_archive_is_valid ()
 	return $?
 }
 
-source_archive_info_file ()
+source_archive_info ()
 {
 	local archive=$1
 	local file="archive.info"
@@ -146,14 +145,15 @@ source_archive_info_file ()
 	cd $tmpDir
 	case "$archive" in
 		*.zip)
-			unzip -o $archive $file
-			source $file
+			unzip -o $archive $file &> /dev/null
 			;;
 		*.tar.gz)
-			tar -xzf $archive "./$file"
-			source $file
+			tar -xzf $archive "./$file" &> /dev/null
 			;;
 	esac
+	while read -r line; do
+		eval "$line"
+	done < <( sed -n 2,4p $file )
 	cd $OLDPWD
 	rm -rf $tmpDir
 }

@@ -1,5 +1,18 @@
 # this is a kde basic backup profile (written in BASH)
 # @brief add .config/ files
+#
+# some are taken from https://github.com/shalva97/kde-configuration-files
+
+kde_home_files()
+{
+	local dirFrom="$HOME"
+	local dirTo="."
+	local paths=(
+		'.kde'
+		'.kde4'
+	)
+	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
+}
 
 kde_config_files()
 {
@@ -40,7 +53,17 @@ kde_config_files()
 		'ksplashrc'
 		'kwalletrc'
 		'kxkbrc'
+		'kcmfonts'
+		'plasmanotifyrc'
 		'autostart'
+		'spectaclerc'
+		'gtkrc'
+		'gtkrc-2.0'
+		'gtk-3.0/*'
+		'gtk-4.0/*'
+		'breezerc'
+		'lightlyrc'
+		'lightlyshaders.conf'
 	)
 	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
 }
@@ -55,12 +78,16 @@ kde_share_files()
 		'icons'
 		'wallpapers'
 		'fonts'
+		'dolphin'
+		'kxmlgui5'
+		'user-places.xbel'
 	)
 	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
 }
 
 use_profile_backup ()
 {
+	kde_home_files
 	kde_config_files
 	kde_share_files
 }

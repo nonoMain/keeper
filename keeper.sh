@@ -43,7 +43,6 @@ add_entries_to_archive()
 	local paths=("$@")
 	for entrie in "${paths[@]}"; do
 		add_path_to_tmp_dir "$dirFrom/$entrie" "$dirTo/$entrie"
-		echo_msg "Linked $dirFrom/$entrie to $dirTo"
 	done
 }
 
@@ -67,7 +66,8 @@ generate_info_file ()
 creator='$USER'
 date_archive_created='$(date +%Y-%m-%d)'
 doc='backup made by $USER on $HOSTNAME'
-message='$message'
+# Preview message
+$message
 EOF
 	echo $archiveinfoPath
 }
@@ -88,7 +88,12 @@ create_archive ()
 # @param $1 path to the archive
 preview_archive_details ()
 {
-	display_file_from_archvie "$1" "archive.info"
+	source_archive_info "$1"
+echo -e "
+$doc
+on $date_archive_created
+"
+display_file_from_archive  "$1" 'archive.info' | sed -n '5,$p'
 }
 
 run_backup ()
@@ -116,11 +121,11 @@ run_restore ()
 	archivePath=$(get_full_path "$archivePath")
 	# restore
 	restore_archive "$archivePath" "$destPath"
-	source_archive_info_file "$archivePath"
+	source_archive_info "$archivePath"
 
 	# --sed-home-path
-	echo_msg "Sed home path:"
-	if [[ $sed_home_path -eq 1 ]]; then
+	if [[ "$sed_home_path" -eq "1" ]]; then
+		echo_msg "Sed home path:"
 		if [[ -z "$creator" ]]; then
 			echo_error_msg "No creator was found in the archive.info file"
 		elif [[ "$creator" == "$USER" ]]; then
@@ -281,10 +286,10 @@ elif [[ $choose == "restore" ]]; then
 		echo_msg "will replace the old home path with the new one (if they are different)"
 	fi
 	if [[ $to_preview == 1 ]]; then
-		echo_msg "Preview archive info:"
-		echo -e "${BLUE}"
+		echo_msg "Preview details:"
+		printf "${BLUE}"
 		preview_archive_details "$pathFrom"
-		echo -e "${NC}"
+		printf "${NC}"
 	fi
 fi
 

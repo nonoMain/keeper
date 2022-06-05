@@ -1,17 +1,19 @@
 # this is a default basic backup profile (written in BASH)
 
 # @brief add $HOME .rc files
-default_home_dotfiles()
+default_home_files()
 {
 	local dirFrom="$HOME"
-	local dirTo=""
+	local dirTo="."
 	local paths=(
 		'.aliases'
 		'.editorconfig'
 		# rc files
+		'.useful_functions'
 		'.bashrc'
 		'.zshrc'
 		'.vimrc'
+		'.vim'
 	)
 	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
 }
@@ -22,17 +24,13 @@ default_config_files()
 	local dirFrom="$HOME/.config"
 	local dirTo=".config"
 	local paths=(
-		# rc files
-		'.bash_profile'
-		'.tmux.conf'
-		'.screenrc'
-		'.gitconfig'
+		# DE stuff
 		'.fonts'
 		'.themes'
 		'.icons'
-		'latte'
-		'lattedockrc'
-		'spectaclerc'
+		'gtkrc*'
+		'gtk-*'
+		'fontconfig'
 		# tools
 		'lsd'
 		'htop'
@@ -41,16 +39,10 @@ default_config_files()
 		'nvim'
 		'nautilus'
 		'xournalpp'
-		'vlc'
-		'vlcrc'
 		'GIMP'
-		'libreoffice*'
+		'libreoffice'
 		'VirtualBoxVMrc'
 		'VirtualBoxrc'
-		# Desktop enviorment related
-		'gtkrc*'
-		'gtk-*'
-		'fontconfig'
 	)
 	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
 }
@@ -65,14 +57,13 @@ default_share_files()
 		'color-schemes'
 		'icons'
 		'wallpapers'
-		'vlc'
 	)
 	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
 }
 
 use_profile_backup ()
 {
-	default_home_dotfiles
+	default_home_files
 	default_config_files
 	default_share_files
 }
