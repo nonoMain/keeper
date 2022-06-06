@@ -15,7 +15,7 @@ done
 export SCRIPT_DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 
 # source lib
-source $SCRIPT_DIR/.keeper.lib.sh
+source $SCRIPT_DIR/.lib.sh
 
 # --- Functions and global variables section
 TMP_DIR=""

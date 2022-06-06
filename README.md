@@ -7,23 +7,6 @@ the files that you specify to wherever you specify
 </p>
 
 # How to use?
-Examples
-```sh
-# backup starting from my current directory to backup.zip
-./keeper.sh -b [options] -t backup.zip
-# backup starting from a specific directory to backup.zip
-./keeper.sh -b [options] -t backup.zip -f <specific directory>
-
-# restore my backup.zip to home directory
-./keeper.sh -r [options] -f backup.zip
-# restore my backup.zip to a specific directory
-./keeper.sh -r [options] -f backup.zip -t <specific directory>
-
-# restore my backup.zip to a specific directory from a script that restores that config to
-# a new user (at least that how I'd do it)
-./keeper.sh -r --no-confirm --sed-home-path -f backup.zip -t <specific directory>
-```
-
 Usage
 ```
 Usage: keeper.sh [options]
@@ -51,6 +34,23 @@ Good:
     keeper.sh -b -f $HOME -t /tmp/backup.tar.gz
 Bad:
     keeper.sh -bf $HOME -t /tmp/backup.tar.gz
+```
+
+TL;DR (examples)
+```sh
+# backup starting from my current directory to backup.zip
+./keeper.sh -b [options] -t backup.zip
+# backup starting from a specific directory to backup.zip
+./keeper.sh -b [options] -t backup.zip -f <specific directory>
+
+# restore my backup.zip to home directory
+./keeper.sh -r [options] -f backup.zip
+# restore my backup.zip to a specific directory
+./keeper.sh -r [options] -f backup.zip -t <specific directory>
+
+# restore my backup.zip to a specific directory from a script that restores that config to
+# a new user (at least that how I'd do it)
+./keeper.sh -r --no-confirm --sed-home-path -f backup.zip -t <specific directory>
 ```
 
 # What can be backed up?
