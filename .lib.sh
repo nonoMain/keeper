@@ -338,9 +338,7 @@ add_path_to_archive ()
 			# tar.gz archives can't be updated, so we have to recreate it
 			local tmpDir=$(generate_tmp_dir)
 			cp $archive $tmpDir
-			#cp -r "$path"/* "$path"/.[a-zA-Z]* $tmpDir
-			cp -r "$path/".[a-zA-Z]* $tmpDir &> /dev/null || echo_warning_msg "Faild to find files matching '.[a-zA-Z]*'"
-			cp -r "$path/"* $tmpDir &> /dev/null || echo_warning_msg "Faild to find files matching '*'"
+			cp -r "$path/".[^\.]* $tmpDir 1> /dev/null || echo_warning_msg "Failed to find files matching '.*'"
 			cd $tmpDir
 			tar -xzf $archive 1> /dev/null
 			rm -rf $(basename $archive)
