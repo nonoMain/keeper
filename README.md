@@ -10,24 +10,30 @@ the files that you specify to wherever you specify
 Usage
 ```
 Usage: keeper.sh [options]
--b, --backup         backup option [requires -t]
--r, --restore        restore option [requires -f]
--f, --from <path>    in case of restore, specify the backup file
-                     in case of backup its optional, specify the directory to start from [default=\$PWD]
--t, --to <path>      in case of backup, specify the name of the backup file
-                     in case of restore its optional, specify the directory to restore to [default=\$PWD]
--h, --help           show this help message
---profiles           show the available profiles
---profile <profile>  backup profile (what files to backup), default is 'default'
---no-confirm         don't ask for confirmation before executing the backup/restore
---no-color           don't use colors in output
---preview            preview information about the backup/restore before running it [requires -b or -r]
---dont-run           run everything but the backup/restore
---only-preview       calls --preview and --dont-run [requires -b or -r]
--m, --message <msg>  in case of backup, the message to be added to the backup file (to be previewed)
---sed-home-path      will replace the old home path with the new one inside all the files from the archive
-                         mainly used for images and files that were written as in /home/<old_user> inside
-                         config files and now are in /home/<new_user>
+general:
+    -b, --backup          backup option [requires -t]
+    -r, --restore         restore option [requires -f]
+    -f, --from <path>     in case of restore, specify the backup file
+                          in case of backup its optional, specify the directory to start from [default=\$PWD]
+    -t, --to <path>       in case of backup, specify the name of the backup file
+                          in case of restore its optional, specify the directory to restore to [default=\$PWD]
+    --no-confirm          don't ask for confirmation before executing the backup/restore
+    --no-color            don't use colors in output
+    --dont-run            run everything but the backup/restore
+    -h, --help            show this help message
+
+backup:
+    --profiles            show the available profiles
+    --profile <profile>   backup profile (what files to backup), default is 'default'
+    -m, --message <msg>   in case of backup, the message to be added to the backup info file (to be previewed)
+    --message-file <file> in case of backup, the file to be added to the backup info file (to be previewed)
+                          this option is made for when the message you want is pre-made or multilined
+restore:
+    --preview             preview information about the backup before restoring it
+    --only-preview        calls --preview and --dont-run
+    --sed-home-path       will replace the old home path with the new one inside all the files from the archive
+                          mainly used for images and files that were written as in /home/<old_user> inside
+                          config files and now are in /home/<new_user>
 
 ** Note: you cannot combine options as one command line argument e.g: **
 Good:

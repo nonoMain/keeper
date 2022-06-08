@@ -218,13 +218,19 @@ while [ $# -gt 0 ]; do
 			archive_info_message="$2"
 			shift 2 # shift 2 times to get rid of the option's value
 			;;
+		--message-file)
+			archive_info_message="$(cat $2)" 1> /dev/null || cat_failed=1
+			[ $cat_failed -eq 1 ] && echo_error_msg "Somthing went wrong when getting the file for the message, check the output above"
+			[ $cat_failed -eq 1 ] && exit
+			shift 2 # shift 2 times to get rid of the option's value
+			;;
 		-- )
 			echo "reached end of options"
 			shift
 			break
 			;;
 		*)
-			echo_error_msg "Unknown option"
+			echo_error_msg "Unknown option [$1]"
 			help_message
 			exit
 			;;
