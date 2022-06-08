@@ -176,10 +176,10 @@ add_path_to_dest_at ()
 	[ ! -d $dirAt ] && mkdir -p $dirAt
 	if [[ "${pathFrom@Q}" =~ \* ]]; then
 		echo_msg "Will expand & link $pathFrom to $dirAt"
-		ln -sf ${pathFrom} "$dirAt"
+		ln -sf $PWD/${pathFrom} "$dirAt"
 	elif [[ -e "$pathFrom" ]]; then
-		echo_msg "Linking $pathFrom to $pathAt"
-		ln -sf "$pathFrom" "$pathAt"
+		echo_msg "Linking $PWD/$pathFrom to $pathAt"
+		ln -sf "$PWD/$pathFrom" "$pathAt"
 	fi
 }
 

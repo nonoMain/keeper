@@ -219,9 +219,9 @@ while [ $# -gt 0 ]; do
 			shift 2 # shift 2 times to get rid of the option's value
 			;;
 		--message-file)
-			archive_info_message="$(cat $2)" 1> /dev/null || cat_failed=1
-			[ $cat_failed -eq 1 ] && echo_error_msg "Somthing went wrong when getting the file for the message, check the output above"
-			[ $cat_failed -eq 1 ] && exit
+			archive_info_message="$(cat $2)" 1> /dev/null && cat_failed=0 || cat_failed=1
+			[[ $cat_failed -eq 1 ]] && echo_error_msg "Somthing went wrong when getting the file for the message, check the output above"
+			[[ $cat_failed -eq 1 ]] && exit
 			shift 2 # shift 2 times to get rid of the option's value
 			;;
 		-- )

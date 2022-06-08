@@ -5,7 +5,7 @@
 
 kde_home_files()
 {
-	local dirFrom="$HOME"
+	local dirFrom=""
 	local dirTo="."
 	local paths=(
 		'.kde'
@@ -16,7 +16,7 @@ kde_home_files()
 
 kde_config_files()
 {
-	local dirFrom="$HOME/.config"
+	local dirFrom=".config"
 	local dirTo=".config"
 	local paths=(
 		'plasma-org.kde.plasma.desktop-appletsrc'
@@ -70,7 +70,7 @@ kde_config_files()
 
 kde_share_files()
 {
-	local dirFrom="$HOME/.local/share"
+	local dirFrom=".local/share"
 	local dirTo=".local/share"
 	local paths=(
 		'plasma'
