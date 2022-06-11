@@ -3,7 +3,7 @@
 # @brief add $HOME .rc files
 default_home_files()
 {
-	local dirFrom=""
+	local dirFrom="."
 	local dirTo="."
 	local paths=(
 		'.aliases'

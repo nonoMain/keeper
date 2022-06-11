@@ -5,7 +5,7 @@
 
 kde_home_files()
 {
-	local dirFrom=""
+	local dirFrom="."
 	local dirTo="."
 	local paths=(
 		'.kde'
