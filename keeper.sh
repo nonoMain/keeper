@@ -280,6 +280,7 @@ esac
 
 if [[ ! -f "$SCRIPT_DIR"/profiles/"$config_backup_profile" ]]; then
 	echo_error_msg "$config_backup_profile does not exist inside $SCRIPT_DIR/profiles/"
+	list_profiles
 	exit
 fi
 pathFrom=$(get_full_path "$pathFrom")
