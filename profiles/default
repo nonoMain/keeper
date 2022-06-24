@@ -39,6 +39,8 @@ default_config_files()
 		'nvim'
 		'nautilus'
 		'xournalpp'
+		'okularpartrc'
+		'okularrc'
 		'GIMP'
 		'libreoffice'
 		'VirtualBoxVMrc'
