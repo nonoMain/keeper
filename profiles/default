@@ -14,6 +14,8 @@ default_home_files()
 		'.zshrc'
 		'.vimrc'
 		'.vim'
+		# audacity theme
+		'.audacity-data/Theme'
 	)
 	add_entries_to_archive "$dirFrom" "$dirTo" "${paths[@]}"
 }
